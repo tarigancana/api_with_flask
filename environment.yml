@@ -1,0 +1,35 @@
+name: flask_api
+dependencies:
+- openssl=1.0.2h=1
+- pip=8.1.2=py35_0
+- python=3.5.2=0
+- readline=6.2=2
+- setuptools=23.0.0=py35_0
+- sqlite=3.13.0=0
+- tk=8.5.18=0
+- wheel=0.29.0=py35_0
+- xz=5.2.2=0
+- zlib=1.2.8=3
+- pip:
+  - alembic==0.8.7
+  - aniso8601==1.1.0
+  - click==6.6
+  - fake-factory==0.5.10
+  - flask==0.11.1
+  - flask-migrate==2.0.0
+  - flask-restful==0.3.5
+  - flask-script==2.0.5
+  - flask-sqlalchemy==2.1
+  - itsdangerous==0.24
+  - jinja2==2.8
+  - mako==1.0.4
+  - markupsafe==0.23
+  - psycopg2==2.6.2
+  - python-dateutil==2.5.3
+  - python-editor==1.0.1
+  - pytz==2016.6.1
+  - six==1.10.0
+  - sqlalchemy==1.0.14
+  - werkzeug==0.11.10
+prefix: /Users/rencanatarigan/miniconda3/envs/flask_api
+
