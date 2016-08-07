@@ -210,7 +210,7 @@ class GroupModifyUserApi(Resource):
 
 @app.route('/users/groups')
 def users_with_groups():
-    sql = text("select users.name, users.email, array_to_string(array_agg(distinct groups.name),',') as group_name, count(groups.id) from users JOIN user_group ON users.id = user_id JOIN groups on group_id = groups.id GROUP BY users.name, users.email ORDER BY 4 DESC;")
+    sql = text("select users.name, users.email, array_to_string(array_agg(distinct groups.name),',') as group_name, count(groups.id) from users JOIN user_group ON users.id = user_id JOIN groups on group_id = groups.id GROUP BY users.name, users.email ORDER BY 1 DESC;")
     result = db.engine.execute(sql)
     args = parser.parse_args()
     json_type = args['json']
