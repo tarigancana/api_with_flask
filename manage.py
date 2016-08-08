@@ -3,13 +3,14 @@ from flask_script import Manager
 from flask_migrate import Migrate, MigrateCommand
 from faker import Faker
 
-from app import app, db
+from app import flask_app
+from db import db
 from random import randint
 from models.user import User
 from models.group import Group
 
-migrate = Migrate(app, db)
-manager = Manager(app)
+migrate = Migrate(flask_app, db)
+manager = Manager(flask_app)
 
 manager.add_command('db', MigrateCommand)
 
@@ -17,7 +18,7 @@ manager.add_command('db', MigrateCommand)
 def list_routes():
     import urllib
     output = []
-    print(app.url_map)
+    print(flask_app.url_map)
 
 @manager.command
 def seed_data_user():
