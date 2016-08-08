@@ -1,8 +1,9 @@
-from app import db
+from db import db
 from sqlalchemy.dialects.postgresql import JSON
 import datetime
 from sqlalchemy.sql.expression import text
 from sqlalchemy import UniqueConstraint
+from models.group import Group
 
 groups = db.Table('user_group',
         db.Column('user_id', db.Integer, db.ForeignKey('users.id')),
@@ -17,7 +18,7 @@ class User(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(), nullable=False)
     email = db.Column(db.String())
-    groups = db.relationship('Group', secondary=groups, backref=db.backref('users', lazy='dynamic'), cascade="delete")
+    groups = db.relationship(Group, secondary=groups, backref=db.backref('users', lazy='dynamic'), cascade="delete")
     created_at = db.Column(db.DateTime, server_default=text("(CURRENT_TIMESTAMP AT TIME ZONE 'UTC')"))
     updated_at = db.Column(db.DateTime())
 
