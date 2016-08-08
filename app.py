@@ -13,7 +13,7 @@ app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 class FlaskApiEncoder(JSONEncoder):
     item_separator = ','
-    key_seoarator  = ':'
+    key_separator  = ':'
     def default(self, obj):
         if isinstance(obj, User):
             return {
@@ -208,27 +208,19 @@ class GroupModifyUserApi(Resource):
         except Exception as e:
             return jsonify(message="Error: %s" %e)
 
+from sqlalchemy import func, desc, asc
+
 @app.route('/users/groups')
 def users_with_groups():
-    sql = text("select users.name, users.email, array_to_string(array_agg(distinct groups.name),',') as group_name, count(groups.id) from users JOIN user_group ON users.id = user_id JOIN groups on group_id = groups.id GROUP BY users.name, users.email ORDER BY 1 DESC;")
-    result = db.engine.execute(sql)
-    args = parser.parse_args()
-    json_type = args['json']
-    if json_type == 'pretty':
-        return json.dumps([(dict(row.items())) for row in result], indent=4)
-    else:
-        return json.dumps([(dict(row.items())) for row in result], separators=(',', ':'))
+    result = db.session.query(User, func.array_to_string(func.array_agg(func.distinct(Group.name)), ',').label('group_name'), func.count(Group.id)).join('groups').group_by(User).order_by(desc(User.name)).all()
+    setJSONFormat()
+    return jsonify(result)
 
 @app.route('/users/group')
 def users_with_group():
-    sql = text("select users.id, users.name, users.email, count(group_id) as group_count from users JOIN user_group ON users.id = user_id GROUP BY 1,2,3 ORDER BY 4 ASC;")
-    result = db.engine.execute(sql)
-    args = parser.parse_args()
-    json_type = args['json']
-    if json_type == 'pretty':
-        return json.dumps([(dict(row.items())) for row in result], indent=4)
-    else:
-        return json.dumps([(dict(row.items())) for row in result], separators=(',', ':'))
+    result = db.session.query(User, func.count(Group.id).label('group_count')).join('groups').group_by(User).order_by(asc('group_count')).all()
+    setJSONFormat()
+    return jsonify(result)
 
 @app.route('/user/<int:user_id>/groups')
 def groups_from_user(user_id):
@@ -238,14 +230,9 @@ def groups_from_user(user_id):
 
 @app.route('/group/users')
 def group_with_users():
-    sql = text("select groups.id, groups.name, count(user_id) as user_count from groups join user_group on groups.id = group_id GROUP BY 1,2 order by 3 DESC;")
-    result = db.engine.execute(sql)
-    args = parser.parse_args()
-    json_type = args['json']
-    if json_type == 'pretty':
-        return json.dumps([(dict(row.items())) for row in result], indent=4)
-    else:
-        return json.dumps([(dict(row.items())) for row in result], separators=(',', ':'))
+    result = db.session.query(Group, func.count('user_id').label('user_count')).join('users').group_by(Group).order_by(desc('user_count')).all()
+    setJSONFormat()
+    return jsonify(result)
 
 @app.route('/group/<int:group_id>/users')
 def users_from_group(group_id):
